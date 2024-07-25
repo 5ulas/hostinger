@@ -1,0 +1,26 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: ansible_playbook
+  playbook: playbook.yml
+  ansible_version: latest
+  ansible_vault_password_file: ~/.ansible_vault_pass
+
+verifier:
+  name: busser
+  sudo: true
+  verifier_root: test/integration/default
+
+platforms:
+  - name: ubuntu-18.04
+
+suites:
+  - name: default
+    provisioner:
+      hosts: all
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:

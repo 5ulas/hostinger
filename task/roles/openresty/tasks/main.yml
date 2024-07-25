@@ -1,0 +1,58 @@
+- name: Update apt cache after adding repository
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Install necessary packages
+  apt:
+    name:
+      - wget
+      - gnupg
+      - ca-certificates
+    state: present
+  become: true
+
+- name: Download OpenResty GPG key
+  get_url:
+    url: https://openresty.org/package/pubkey.gpg
+    dest: /tmp/openresty_pubkey.gpg
+
+- name: Add OpenResty GPG key
+  command:
+    cmd: apt-key add /tmp/openresty_pubkey.gpg
+  become: true
+
+- name: Check if OpenResty keyring file exists
+  stat:
+    path: /usr/share/keyrings/openresty.gpg
+  register: keyring_stat
+
+- name: Convert OpenResty GPG key to keyring format
+  command:
+    cmd: gpg --dearmor -o /usr/share/keyrings/openresty.gpg /tmp/openresty_pubkey.gpg
+  become: true
+  when: not keyring_stat.stat.exists
+
+- name: Add OpenResty repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu {{ ansible_lsb.codename }} main"
+    filename: "openresty"
+  become: true
+
+- name: Update apt cache after adding repository
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Install OpenResty
+  apt:
+    name: openresty
+    state: present
+  become: true
+
+- name: Start OpenResty service
+  service:
+    name: openresty
+    state: started
+    enabled: yes
+  become: true

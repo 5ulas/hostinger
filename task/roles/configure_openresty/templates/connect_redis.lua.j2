@@ -1,0 +1,36 @@
+local redis = require "resty.redis"
+local red = redis:new()
+
+local connect_timeout = 1000 
+local send_timeout = 1000 
+local read_timeout = 1000 
+local redis_host = "{{ redis_host }}"
+local redis_port = {{ redis_port }}
+local key = "test_key"
+local value = "test_value"
+local keepalive_timeout = 10000
+local max_connections = 100 
+
+red:set_timeouts(1000, 1000, 1000)
+
+local ok, err = red:connect(redis_host, redis_port)
+if not ok then
+    ngx.say("Failed to connect to Redis: ", err)
+    return
+end
+
+ok, err = red:set(key, value)
+if not ok then
+    ngx.say("Failed to set key '", key, "': ", err)
+    return
+end
+
+local res, err = red:get(key)
+if not res then
+    ngx.say("Failed to get key '", key, "': ", err)
+    return
+end
+
+ngx.say("Value for key '", key, "': ", res)
+
+red:set_keepalive(keepalive_timeout, max_connections)

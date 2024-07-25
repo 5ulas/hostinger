@@ -1,0 +1,18 @@
+---
+- name: Deploy Lua script
+  template:
+    src: connect_redis.lua.j2
+    dest: /usr/local/openresty/nginx/conf/connect_redis.lua
+  become: true
+
+- name: Copy over Lua script
+  template:
+    src: nginx.conf.j2
+    dest: /usr/local/openresty/nginx/conf/nginx.conf
+  become: true
+
+- name: Restart OpenResty
+  service:
+    name: openresty
+    state: restarted
+  become: true
