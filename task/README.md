@@ -6,3 +6,8 @@ Requirements:
 3. Ruby (tested on 3.0.2)
 4. bundle install / gem install <packages in Gemfile>
 5. kitchen test
+
+
+---
+
+https://github.com/5ulas/hostinger.git
