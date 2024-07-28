@@ -6,7 +6,7 @@ provisioner:
   name: ansible_playbook
   playbook: playbook.yml
   ansible_version: latest
-  ansible_vault_password_file: ~/.ansible_vault_pass
+  ansible_vault_password_file: ./.ansible_vault_pass
 
 verifier:
   name: busser
